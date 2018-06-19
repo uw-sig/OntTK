@@ -1,0 +1,64 @@
+# without antomical class filter
+
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX cpo: <http://purl.org/sig/ont/cpo/>
+SELECT ?result ?resultLabel
+WHERE{
+  BIND (<http://purl.org/sig/ont/fma/fma52748> AS ?subject).
+  ?subject cpo:part* ?candidate.
+
+  {
+  	bind (?candidate as ?result).
+    ?result rdfs:label ?resultLabel.
+  }
+  union
+  {
+    ?candidate rdfs:label ?label.
+    FILTER(STRSTARTS(STR(?label), "Right")||STRSTARTS(STR(?label), "Left")).
+    ?candidate rdfs:subClassOf ?result.
+    ?result rdfs:label ?resultLabel.
+  }
+}
+
+
+# with class filter
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX cpo: <http://purl.org/sig/ont/cpo/>
+SELECT distinct ?result ?resultLabel
+WHERE{
+  # http://purl.obolibrary.org/obo/MA_0001487 is Mandible (Mus musculus)
+  BIND (<http://purl.obolibrary.org/obo/MA_0001487> AS ?subject).
+
+  # http://purl.org/sig/ont/cmo/cmo0001310 is Cardinal organ part (Mus musculus)
+  # http://purl.org/sig/ont/cmo/cmo0006662 is Portion of tissue (Mus musculus)
+  VALUES ?organSubs { <http://purl.org/sig/ont/cmo/cmo0001310> <http://purl.org/sig/ont/cmo/cmo0006662> }
+
+  ?subject cpo:part* ?candidate.
+
+  {
+  	bind (?candidate as ?result).
+    ?result rdfs:label ?resultLabel.
+  }
+  union
+  {
+    ?candidate rdfs:label ?label.
+    FILTER(STRSTARTS(STR(?label), "Right")||STRSTARTS(STR(?label), "Left")).
+    ?candidate rdfs:subClassOf ?result.
+    ?result rdfs:label ?resultLabel.
+  }
+
+  # filter by class of value
+  # http://purl.obolibrary.org/obo/MA_0003001 is Organ (Mus musculus)
+  ?subject rdfs:subClassOf* ?subjectType.
+  ?result rdfs:subClassOf* ?resultType.
+
+  BIND(IF((?subjectType = <http://purl.obolibrary.org/obo/MA_0003001>), ?organSubs,?empty) AS ?allowed).
+  FILTER(?resultType=?allowed).
+}
+
+
+Periosteum of right lower lateral incisor tooth bony socket
