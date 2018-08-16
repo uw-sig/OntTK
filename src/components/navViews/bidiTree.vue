@@ -15,7 +15,7 @@
       </ul>
     </div>
     <div class="subject">
-      <span>{{subjectNode.label}}</span>
+      <span v-if="displaySubject">{{subjectNode.label}}</span>
     </div>
     <div class="descendants">
       <ul class="descendant-content">
@@ -36,7 +36,7 @@
 
 <script>
 export default {
-  props: ['property', 'subject'],
+  props: ['property', 'subject', 'displaySubject'],
   data () {
     return {
       'loading':false,
@@ -150,7 +150,8 @@ export default {
       alert("results: "+results);
     },
     displayErrors: function(errors){
-      alert("errors: "+errors);
+      //alert("errors: "+errors);
+      console.log("biditree errors = "+errors);
     },
 
     nodeID: function(node){
@@ -287,6 +288,9 @@ ul {
   margin-left: 0;
   padding-left: 0;
 }
+div{
+  background-color: inherit;
+}
 .subject {
   width:calc(100% - 10px);
   height:50px;
@@ -295,6 +299,7 @@ ul {
   white-space: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
+  /*background-color: #E9EEF3;*/
 }
 .ancestors, .descendants {
   overflow:auto;
@@ -340,6 +345,7 @@ ul {
   width:100%;
   margin:0px;
   padding:5px;
+  /*margin:5px;*/
 }
 .clickable { cursor: pointer; }
 .treenode {

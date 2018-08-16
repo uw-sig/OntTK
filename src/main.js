@@ -18,6 +18,7 @@ Vue.use(ElementUI, {locale})
 //Vue.use(VueResource);
 
 import store from './state/store'
+import _ from 'lodash'
 
 Vue.config.productionTip = false
 

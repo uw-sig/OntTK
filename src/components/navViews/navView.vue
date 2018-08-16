@@ -3,7 +3,7 @@
 
 <script>
 /*
-  Because DataViews may need to issue their own ontology queries, we should
+  Because NavViews may need to issue their own ontology queries, we should
   assume that they have access to the Vuex store. Hopefully we can limit store
   interaction to this base component.
 */

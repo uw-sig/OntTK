@@ -6,20 +6,19 @@
           <el-col :span="12">
             <el-row type="flex">
               <img id="logo" src="./assets/sig_logo_3.png"></img>
-              <span id="logo-text">OCDM Browser</span>
+              <span id="logo-text">{{title}}</span>
             </el-row>
           </el-col>
           <el-col :span="12" id="header-tools">
             <el-row type="flex" align="middle">
-              <el-col :span="20">
+              <el-col :span="18">
                 <el-row type="flex" justify="end">
-                  <span class="search-label">search:</span>
+                  <span id="search-label">search:</span>
                   <el-input class="search-input" placeholder="enter search term ..." prefix-icon="el-icon-search" v-on:keyup.enter.native="search"></el-input>
                 </el-row>
               </el-col>
-              <el-col :span="4">
-                <el-row type="flex" justify="end">
-                  <div >
+              <el-col :span="6">
+                <el-row type="flex" justify="end" align="middle">
                     <el-popover
                       ref="backpop"
                       placement="bottom"
@@ -40,7 +39,7 @@
                         icon="el-icon-arrow-right" :disabled="!$store.getters.getHasHistoryForward" @click="$store.dispatch('historyForward')">
                       </el-button>
                     </el-button-group>
-                  </div>
+                    <i id="settings-button" class="el-icon-setting" @click="showSettings"></i>
                 </el-row>
               </el-col>
             </el-row>
@@ -50,15 +49,21 @@
       <el-container id="middle">
         <!--<el-aside width="150px"></el-aside>-->
         <el-main>
-          <router-view/>
+          <browser :navWidth="navWidth"/>
         </el-main>
       </el-container>
       <el-footer height="40px">
         <el-row type="flex" class="row-bg" >
-          <el-col :span="18" type="flex">
+          <el-col :span="14" type="flex">
             <span>Copyright &copy; 2018 University of Washington Structural Informatics Group</span>
           </el-col>
-          <el-col :span="6" id="footer-tools">
+          <el-col :span="6">
+            <el-row type="flex" justify="end">
+              <span id="nav-width-label-area">display:</span>
+              <div id="nav-width-slider-area"><el-slider v-model="navWidth" :max="24" :step="1"></el-slider></div>
+            </el-row>
+          </el-col>
+          <el-col :span="4" id="footer-tools">
             <el-row type="flex" justify="end" id="bookmark-area" align="middle">
               <i v-if="!isBookmarked" class="el-icon-star-off" @click="bookmarkAdd"></i>
               <i v-else class="el-icon-star-on" @click="bookmarkRemove"></i>
@@ -83,27 +88,49 @@
         </el-row>
       </el-footer>
     </el-container>
-    <search-results-dialog :visible="searchResultsDialogVisible" :fields="config.search.fields" :results="searchResults" @node-selected="setSelectedNode" @search-close="searchResultsDialogVisible=false"></search-results-dialog>
+    <search-results-dialog
+      :visible="searchResultsDialogVisible"
+      :fields="config.search.fields"
+      :results="searchResults"
+      @node-selected="setSelectedNode"
+      @search-close="searchResultsDialogVisible=false"
+    ></search-results-dialog>
+    <settings-dialog
+      :visible="settingsDialogVisible"
+      @settings-update=""
+      @settings-close="settingsDialogVisible=false"
+    ></settings-dialog>
   </div>
 </template>
 
 <script>
-import searchResultsDialog from "@/components/SearchResultsDialog";
+import searchResultsDialog from "@/components/dialogs/searchResultsDialog"
+import settingsDialog from "@/components/dialogs/settingsDialog"
+import browser from "@/components/Browser"
 import {config} from '@/config'
 export default {
+  name: 'OntTK',
   components: {
-    searchResultsDialog: searchResultsDialog
+    browser:browser,
+    searchResultsDialog: searchResultsDialog,
+    settingsDialog: settingsDialog,
   },
   data() {
     return {
-      name: 'OCDM Browser',
+      title: config.title,
       bookmarks: [],
       selectedBookmark: null,
+      settingsDialogVisible: false,
+      currSettings: {},
 
       // search related fields
       config:config,
       searchResultsDialogVisible: false,
-      searchResults:[]
+      searchResults:[],
+
+      // layout related fields
+      navWidth: config.navWidth,
+      //navWidthMax: 24,
     }
   },
   created: function(){
@@ -112,6 +139,9 @@ export default {
     if(persistentBookmarks!=undefined){
       this.bookmarks = JSON.parse(persistentBookmarks);
     }
+
+    // TODO: check local storage
+    //this.currSettings = this.$store.getters.getSettings;
 
     // check and see if there was an IRI specified in the URL
     var iri = this.$route.query.iri;
@@ -136,6 +166,12 @@ export default {
     }
   },
   methods: {
+    showSettings: function(){
+      this.settingsDialogVisible=true;
+    },
+    setSettings(settings){
+      this.$store.dispatch('setSettings',settings);
+    },
     bookmarkAdd: function(){
       var node = this.currNode;
       this.bookmarks.push(node);
@@ -235,7 +271,7 @@ export default {
   #logo-text {
     padding-left:10px;
   }
-  .search-label {
+  #search-label {
     display: inline-block;
     font-size:12pt;
     padding-right:5px;
@@ -247,6 +283,20 @@ export default {
   }
   .history-button {
     margin: 0;
+  }
+  #settings-button{
+    padding-left:10px;
+    cursor:pointer;
+  }
+  #nav-width-label-area {
+    font-size:12pt;
+    margin-left:10px;
+    margin-right:10px;
+    //width: 100px;
+  }
+  #nav-width-slider-area {
+    width: calc(100% - 100px);
+    padding-left:10px;
   }
   .bookmark-label {
     padding-right:5px;

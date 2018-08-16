@@ -2,7 +2,6 @@ var queries = {
   iri_query: function(search_iri) {
     return `
     PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
-    PREFIX cpo:<http://purl.org/sig/ont/cpo/>
     SELECT ?label
     WHERE
     {
@@ -19,31 +18,12 @@ var queries = {
     PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
     PREFIX owl: <http://www.w3.org/2002/07/owl#>
     PREFIX cpo: <http://purl.org/sig/ont/cpo/>
-    PREFIX ocdm: <http://purl.org/sig/ont/ocdm/>
-    SELECT distinct ?subject (?literal AS ?term) ?label ?species
+    PREFIX fma: <http://purl.org/sig/ont/fma/>
+    SELECT distinct ?subject (?literal AS ?term) ?label
     WHERE {
-      VALUES ?property {cpo:preferred_name cpo:synonym cpo:non-English_equivalent rdfs:label}.
+      VALUES ?property {fma:preferred_name fma:synonym fma:non-English_equivalent rdfs:label}.
       (?subject ?score ?literal) text:query (?property '${search_term}').
       ?subject rdfs:label ?label.
-      OPTIONAL
-      {
-        BIND ("human" AS ?species).
-        Values ?human_roots {ocdm:ocdm0000001}.
-        ?subject rdfs:subClassOf* ?human_roots.
-      }
-      OPTIONAL
-      {
-        BIND ("mouse" AS ?species).
-        Values ?mouse_roots {ocdm:ocdm0000002}.
-        ?subject rdfs:subClassOf* ?mouse_roots.
-      }
-      OPTIONAL
-      {
-        BIND ("zebrafish" AS ?species).
-        Values ?zebrafish_roots {ocdm:ocdm0000003}.
-        ?subject rdfs:subClassOf* ?zebrafish_roots.
-      }
-      FILTER(bound(?species)).
     }
     ORDER BY DESC(?score)
     `;
@@ -53,23 +33,53 @@ var queries = {
     PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 	  PREFIX owl: <http://www.w3.org/2002/07/owl#>
-    PREFIX cpo: <http://purl.org/sig/ont/cpo/>
-    SELECT distinct ?property ?value ?label
+    PREFIX fma: <http://purl.org/sig/ont/fma/>
+    SELECT distinct ?property ?value ?label ?annotProperty ?annotValue
     WHERE
     {
       BIND (<${iri}> AS ?subject).
   	  #?subject rdf:type owl:NamedIndividual.
 
       ?subject ?property ?value.
-      FILTER(STRSTARTS(STR(?property), "http://purl.org/sig/ont/cpo/")).
+      FILTER(STRSTARTS(STR(?property), "http://purl.org/sig/ont/fma/")).
 
       # get value label if it has one
       OPTIONAL{?value rdfs:label ?label}
 
       # ignore blank nodes since we have puns
       FILTER (!isBlank(?value)).
+
+      # get axiom annotations if present
+      OPTIONAL {
+        ?axiom owl:annotatedSource ?subject.
+        ?axiom owl:annotatedProperty ?property.
+        ?axiom owl:annotatedTarget ?value.
+        ?axiom ?annotProperty ?annotValue.
+        FILTER(STRSTARTS(STR(?annotProperty), "http://purl.org/sig/ont/fma/")).
+      }
     }
     ORDER BY (lcase(str(?property)))
+    `
+  },
+  axiom_annotations_query: function(subject,property,object){
+    return `
+    PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+	  PREFIX owl: <http://www.w3.org/2002/07/owl#>
+    PREFIX fma: <http://purl.org/sig/ont/fma/>
+    SELECT distinct ?rel ?annot
+    WHERE
+    {
+      # get axiom annotations if present
+      OPTIONAL {
+        ?axiom owl:annotatedSource <${subject}>.
+        ?axiom owl:annotatedProperty <${property}>.
+        ?axiom owl:annotatedTarget <${object}>.
+        ?axiom ?rel ?annot.
+        FILTER(STRSTARTS(STR(?rel), "http://purl.org/sig/ont/fma/")).
+      }
+    }
+    ORDER BY (lcase(str(?rel)))
     `
   },
   directional_relation_query: function(iri, relationship, inverse){

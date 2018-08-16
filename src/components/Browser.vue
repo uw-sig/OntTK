@@ -1,14 +1,19 @@
 <template>
   <div id="container-area">
-    <el-row id="full-height">
-      <el-col v-for="property,index in treeProps" :key="index" class="tree-col" :span="treeColWidth">
-        <div class="tree-prop-area">
-          <span class="property-input-label">property: {{property.label}}</span>
-        </div>
-        <div class="tree-area">
-          <biditree v-if="node!=undefined" :subject="subject" :property="property" @node-selected="treeNodeSelected"></biditree>
-        </div>
+    <el-row class="full-height">
+      <el-col id="nav-col" :span="navWidth" class="full-height">
+
+        <!-- sort this out
+        <navview :node="node" @node-selected="nodeSelected"></navview>
+        -->
+        <component
+          :is="navViews[0].view"
+          :node="node"
+          @node-selected="nodeSelected"
+        />
+
       </el-col>
+
 
       <!--
       <el-col class="tree-col" :span="6">
@@ -21,7 +26,7 @@
       </el-col>
       -->
 
-      <el-col id="content-col" :span="contentColWidth">
+      <el-col id="content-col" :span="contentWidth">
         <!--
         <div>Property = {{property}}</div>
         <div>Selected = {{node}}</div>
@@ -34,10 +39,10 @@
             <div id="tab-content">
               <component
                 :is="dataView.view"
-                :node="$store.getters.getNode"
+                :node="node"
                 :property="$store.getters.getProperty"
                 @active="dataView.isActive=arguments[0]"
-                @node-selected="treeNodeSelected"
+                @node-selected="nodeSelected"
                 @property-selected=""
               />
             </div>
@@ -61,7 +66,7 @@
 </template>
 
 <script>
-import biditree from './BidiMultiTree';
+import bidimultitree from '@/components/navViews/bidiMultiTree';
 import {config} from '@/config';
 //import nodeinfo from './NodeInfo';
 
@@ -70,6 +75,7 @@ import {config} from '@/config';
 //import store from '../state/store'
 
 export default {
+  props: ['navWidth'],
   components: {
     /*
     ...(() => {
@@ -81,7 +87,7 @@ export default {
         });
     })(),
     */
-    biditree: biditree,
+    //navview: bidimultitree,
     //nodeinfo: nodeinfo,
 
   },
@@ -91,17 +97,22 @@ export default {
       //property:{iri:"http://purl.org/sig/ont/cpo/part",label:"part",inv:false},
       //config: config,
       propertyIndex: config.init.propertyIndex,
-      treeProps: config.navProperties,
+      //treeProps: config.navProperties,
       dataViews: [],
-      activeDataView:'Description',
+      activeDataView:config.initDataView,
+
+      navViews: [],
+      activeNavView:config.initNavView,
     }
   },
   created: function(){
     // only up to 4 properties supported
+    /*
     if(this.treeProps.length>4){
       this.treeProps.length=4;
     }
-
+    */
+    this.loadNavViews();
     this.loadDataViews();
   },
   computed: {
@@ -120,11 +131,8 @@ export default {
       return this.config.treeProps
     },
     */
-    treeColWidth: function(){
-      return Math.floor(config.all_trees_width/this.treeProps.length);
-    },
-    contentColWidth: function(){
-      return 24-(this.treeColWidth*this.treeProps.length);
+    contentWidth: function(){
+      return 24-(this.navWidth);
     },
     node: {
       get() {
@@ -135,15 +143,7 @@ export default {
         this.$store.dispatch('setNodeWithHistory',value);
       }
     },
-    property: function(){
-      return this.treeProps[this.propertyIndex];
-    },
-    subject: function(){
-      if(this.node==undefined){
-        return null;
-      }
-      return {data:{iri:this.node.iri},label:this.node.label};
-    }
+
   },
   methods: {
     /*
@@ -160,12 +160,28 @@ export default {
       var vm = this;
       const context = require.context('@/components/dataViews', true, /\.(js|vue)$/i);
       //console.log("dataview context = "+JSON.stringify(context.keys()));
+
+      // load all data views discovered
+      var allDataViews = [];
       context.keys().forEach(function(key){
         var module = context(key);
         if(module.default.extends!=undefined && module.default.extends.name==="DataView"){
-          vm.dataViews.push({name:module.default.name,view:module.default,isActive:true});
+          allDataViews.push({name:module.default.name,view:module.default,isActive:true});
+          //vm.dataViews.push({name:module.default.name,view:module.default,isActive:true});
         }
       });
+
+      // read config to get configured data views, include if also discoverable
+      var confDataViewNames = config.dataViews;
+      var dataViews = allDataViews.filter(view => confDataViewNames.includes(view.name));
+      //vm.dataViews = dataViews;
+      // TODO: Your are here!
+
+      vm.$store.commit("setAllDataViews",allDataViews);
+      vm.$store.commit("setSelectedDataViews",dataViews);
+      vm.dataViews = dataViews; // TODO: replace with selected
+
+
       /*
       for(var key in context.keys()){
         var dataViewFile = context.keys()[key];
@@ -173,6 +189,25 @@ export default {
         //console.log(context.keys()[key]);
       }
       */
+    },
+    loadNavViews: function(){
+      var vm = this;
+      const context = require.context('@/components/navViews', true, /\.(js|vue)$/i);
+
+      // load all nav views discovered
+      var allNavViews = [];
+      context.keys().forEach(function(key){
+        var module = context(key);
+        if(module.default.extends!=undefined && module.default.extends.name==="NavView"){
+          allNavViews.push({name:module.default.name,view:module.default,isActive:true});
+          //vm.dataViews.push({name:module.default.name,view:module.default,isActive:true});
+        }
+      });
+
+      // read config to get configured nav views, include if also discoverable
+      var confNavViewNames = config.navViews;
+      var navViews = allNavViews.filter(view => confNavViewNames.includes(view.name));
+      vm.navViews = navViews;
     },
     /*
     loadDataView(filePath) {
@@ -193,10 +228,10 @@ export default {
         });
     },
     */
-    treeNodeSelected: function(node){
+    nodeSelected: function(node){
       this.node = node;
       var tabContent = document.getElementById('tab-content');
-      tabContent.scrollTop = 0;
+      //temp tabContent.scrollTop = 0;
     },
     updateNodeData: function(results){
       //this.raw=results;
@@ -237,21 +272,16 @@ export default {
 </script>
 
 <style>
-#container-area, #full-height, .tree-col, #content-col
+#nav-col{
+  /*border-right:2px dotted gray;*/
+  /*background-color: #c8d5e1;*/
+}
+#container-area, .full-height, .tree-col, #content-col
 {
   height:100%;
 }
 #container-area {
   overflow:hidden;
-}
-.tree-col {
-  margin:0px;
-  padding:0px;
-  /*
-  border-left: 1px dotted red;
-  border-right: 1px dotted red;
-  */
-  /*border: 2px solid DarkGray;*/
 }
 #content-col {
   margin:0px;
