@@ -7,10 +7,11 @@
   <div v-for="browser_prop in config.browser_property_prefs">
     <div class="node-data" v-for="nodeDatum in nodeData.filter(datum => datum.property===browser_prop)">
       <div class="prop-label">{{nodeDatum.property.replace(/_/g, " ")}}</div>
-      <div class="prop-val" v-for="val in nodeDatum.values">
+      <div class="prop-val" v-for="val,index in nodeDatum.values">
           <el-row type="flex" justify="space-between" class="value-row" align="middle">
             <div class="pointer val-text" v-if="(typeof val.label !== 'undefined')" @click="treeNodeSelectedInternal({label:val.label,iri:val.value})">{{val.label}}</div>
             <div class="val-text" v-else>{{val.value}}</div>
+
             <div v-if="settings.showAxiomAnnots===true && (typeof val.annotations !== 'undefined')">
               <el-popover
                 placement="bottom"
@@ -18,11 +19,11 @@
                 trigger="click"
                 title="annotations:"
               >
-                <el-table :data="val.annotations" :show-header=false>
-                  <el-table-column property="annotationProperty" label="property"></el-table-column>
-                  <el-table-column property="annotationValue.value" label="value"></el-table-column>
+                <el-table :data="val.annotations" :show-header='false'>
+                  <el-table-column width="200" property="annotationProperty" label="property"></el-table-column>
+                  <el-table-column width="200" property="annotationValue.value" label="value"></el-table-column>
                 </el-table>
-                <i id="annot-icon" class="el-icon-info" type="primary" slot="reference"></i>
+                <i class="annot-icon el-icon-info" type="primary" slot="reference"></i>
               </el-popover>
             </div>
           </el-row>
@@ -40,16 +41,16 @@
         <div class="val-text" v-else>{{val.value}}</div>
         <div v-if="settings.showAxiomAnnots===true && (typeof val.annotations !== 'undefined')">
           <el-popover
-            placement="top"
+            placement="bottom"
             width="400"
             trigger="click"
             title="annotations:"
           >
-            <el-table :data="val.annotations">
+            <el-table :data="val.annotations" :show-header='false'>
               <el-table-column width="200" property="annotationProperty" label="property"></el-table-column>
               <el-table-column width="200" property="annotationValue.value" label="value"></el-table-column>
             </el-table>
-            <i id="annot-icon" class="el-icon-info" type="primary" slot="reference"></i>
+            <i class="annot-icon el-icon-info" type="primary" slot="reference"></i>
           </el-popover>
         </div>
       </el-row>
@@ -195,7 +196,7 @@ export default {
 <style>
 .property-input-label {}
 
-#annot-icon {
+.annot-icon {
   color:gray;
   margin: 5px;
   cursor: pointer;

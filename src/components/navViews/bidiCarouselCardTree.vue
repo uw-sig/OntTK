@@ -57,6 +57,7 @@
 import {config} from "@/config";
 import NavView from '@/components/navViews/navView.vue';
 import biditree from '@/components/navViews/bidiTree';
+import bidiCarouselCardTreeSettingsView from '@/components/settingsViews/bidiCarouselCardTreeSettingsView'
 export default {
   props: ['node'],
   components:{
@@ -69,10 +70,11 @@ export default {
       settingsDialogVisible: false,
       //treeProps: config.navProperties,
       selectedSlideIndex:0,
-      settings: {
+      initSettings: {
         treeProps:config.navProperties,
         isCardStyle:true,
-      }
+      },
+      settingsView:bidiCarouselCardTreeSettingsView,
     }
   },
   created: function(){

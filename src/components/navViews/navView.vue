@@ -12,7 +12,8 @@ export default {
   props: ['node','property'],
   data () {
     return {
-
+      initSettings:{},
+      settingsView:null,
     }
   },
   watch: {
@@ -24,6 +25,28 @@ export default {
       // property change, may need to send inactive event to parent
       this.notifyActive();
     }
+  },
+  computed: {
+    navViewSettings:function(){
+      return this.$store.getters['getNavViewSettings'];
+    },
+
+    settings:{
+      get:function(){
+        return this.navViewSettings[this.$options.name];
+      },
+      set:function(value){
+        var settingsReg = {
+          name:this.$options.name,
+          settings:value,
+        };
+        this.$store.commit('addNavViewSettings',settingsReg);
+      }
+    },
+  },
+  created: function(){
+    // if this view has settings, register it in the store
+    this.settingsRegister();
   },
   mounted: function(){
     /*
@@ -55,7 +78,17 @@ export default {
     },
     getQueries: function() {
       return this.$store.getters.getQueries;
-    }
+    },
+
+    getSettingsView: function(){
+      return this.settingsView;
+    },
+
+    settingsRegister: function(){
+      if(!_.isEmpty(this.initSettings)){
+        this.settings = this.initSettings;
+      }
+    },
   }
 }
 

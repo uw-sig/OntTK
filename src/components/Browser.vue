@@ -174,21 +174,10 @@ export default {
       // read config to get configured data views, include if also discoverable
       var confDataViewNames = config.dataViews;
       var dataViews = allDataViews.filter(view => confDataViewNames.includes(view.name));
-      //vm.dataViews = dataViews;
-      // TODO: Your are here!
 
       vm.$store.commit("setAllDataViews",allDataViews);
       vm.$store.commit("setSelectedDataViews",dataViews);
-      vm.dataViews = dataViews; // TODO: replace with selected
-
-
-      /*
-      for(var key in context.keys()){
-        var dataViewFile = context.keys()[key];
-        this.loadDataView(dataViewFile);
-        //console.log(context.keys()[key]);
-      }
-      */
+      vm.dataViews = dataViews;
     },
     loadNavViews: function(){
       var vm = this;
@@ -207,6 +196,9 @@ export default {
       // read config to get configured nav views, include if also discoverable
       var confNavViewNames = config.navViews;
       var navViews = allNavViews.filter(view => confNavViewNames.includes(view.name));
+
+      vm.$store.commit("setAllNavViews",allNavViews);
+      vm.$store.commit("setSelectedNavViews",navViews);
       vm.navViews = navViews;
     },
     /*

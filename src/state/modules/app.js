@@ -50,15 +50,18 @@ const getters = {
     //return viewName => state.settings.views.dataViews[viewName];
     return state.settings.views.dataViews;
   },
+  getNavViewSettings(state){
+    return state.settings.views.navViews;
+  },
   //getDataViewSettings: state => viewName => state.settings.views.dataViews[viewName],
   /*
   getDataViewSettings(state) {
     return state.settings.views.dataViews[viewName];
   },
-  */
   getNavViewSettings(state,navViewName){
     return state.settings.views.navViews[navViewName];
   },
+  */
   /*
   getSettingsViewMap(state){
     return settingsViewMap;
@@ -144,6 +147,7 @@ const mutations = {
   addNavViewSettings(state,settingsEntry){
     var name = settingsEntry.name;
     var settings = settingsEntry.settings;
+    Vue.set(state.settings.views.navViews, name, settings);
     //state.settings.views.navViews[name]=settings;
   }
   /*

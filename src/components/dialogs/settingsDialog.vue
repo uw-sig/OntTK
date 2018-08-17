@@ -14,29 +14,31 @@
     -->
 
     <!-- nav view settings -->
-    <span class="settings-header">NavView Settings</span>
+    <span class="settings-header">Navigation View Settings</span>
     <div class="settings-area">
-
-      <!--
-      <component v-for="key in Object.keys(settingsViewMap)"
-        :key="key"
-        :is="key"
-        :settings="settingsViewMap(key)"
-        @update-settings="update-settings"
-      />
-    -->
+      <div
+        v-for="navView in $store.getters.getSelectedNavViews"
+        v-if="navView.view.data().settingsView !== undefined"
+      >
+        <span>{{navView.name}} navigation view settings:</span>
+        <component
+          :is='navView.view.data().settingsView'
+          :view='navView'
+        ></component>
+      </div>
     </div>
 
     <!-- data view settings -->
-    <span class="settings-header">DataView Settings</span>
+    <span class="settings-header">Data View Settings</span>
     <div class="settings-area">
-      <!-- settings = {{dataView.view.data().settings}} -->
-      <div v-for="dataView in $store.getters.getSelectedDataViews"> <!--TODO: this also occurs in settings -->
+      <div
+        v-for="dataView in $store.getters.getSelectedDataViews"
+        v-if="dataView.view.data().settingsView !== undefined"
+      >
         <span>{{dataView.name}} data view settings:</span>
         <component
           :is='dataView.view.data().settingsView'
           :view='dataView'
-
         ></component>
       </div>
     </div>

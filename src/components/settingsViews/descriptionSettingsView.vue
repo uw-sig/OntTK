@@ -11,7 +11,7 @@ export default {
   extends: SettingsView,
   data() {
     return {
-      internalSettings:{showAxiomAnnots:true}
+      //internalSettings:{showAxiomAnnots:true}
     }
   },
   computed:{
