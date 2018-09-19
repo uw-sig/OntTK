@@ -17,14 +17,6 @@
           <i @click="addNavPropDialogVisible = true" class="el-icon-plus add-prop-icon" > Add Navigation Property</i>
         </template>
       </el-table>
-      <!--
-      <ul v-if="treeProps.length>0">
-        <li v-for="treeProp in treeProps">
-          <i @click="treePropRemoveSelected(treeProp)" class="el-icon-delete"></i>
-          <span>{{treeProp.label}}</span><span class="inv-label" v-if="treeProp.inv">  (inverse)</span>
-        </li>
-      </ul>
-    -->
     </el-row>
     <el-dialog
       title="Add Navigation Property"
@@ -44,7 +36,7 @@
         <el-col class='label-column'><span>inverse</span><span class='highlight'>*</span></el-col>
         <el-col class='input-column'><el-checkbox v-model="tempNavProp.inv"></el-checkbox></el-col>
       </el-row>
-      <el-row class='tall-row' type='flex' align='middle'>
+      <el-row class='tall-row' type='flex' align='top'>
         <span class='highlight'>*</span><span>unusual setting for navigation trees where parent to child relationship should be the inverse of specified property</span>
       </el-row>
       <!--
@@ -58,7 +50,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="cancelUpdateNavProp()">Cancel</el-button>
-        <el-button type="primary" @click="updateNavProp()">Update</el-button>
+        <el-button type="primary" @click="updateNavProp()">Continue</el-button>
       </span>
     </el-dialog>
   </div>
@@ -67,7 +59,7 @@
 <script>
 import SettingsView from '@/components/settingsViews/settingsView.vue';
 export default {
-  name: "BidiCarouselCardTreeSettingsView",
+  name: "BidiTreeSettingsView",
   extends: SettingsView,
   data() {
     return {
@@ -87,11 +79,30 @@ export default {
         //var newSettings = this.settings;
         //newSettings['showAxiomAnnots']=val;
         //this.settings = newSettings;
-        this.settings['treeProps']=val;
+//        this.settings['treeProps']=val;
+console.log('setting treeProps');
+        this.$set(this.settings['treeProps'],this.editIndex,this.tempNavProp);
         //this.settingsUpdate();
       }
     }
   },
+  /*
+  watch: {
+    settings: {
+      handler: function(newVal){
+        console.log('newSettings = '+JSON.stringify(newVal));
+      },
+      deep:true,
+    },
+    treeProps: {
+      handler: function(newVal){
+        console.log('treeProps = '+JSON.stringify(newVal));
+        //this.$set(this.settings['treeProps'],this.editIndex,this.tempNavProp);
+      },
+      deep:true,
+    }
+  },
+  */
   created: function(){
     this.resetTempNavProp();
   },
@@ -115,7 +126,9 @@ export default {
         this.treeProps.push(this.tempNavProp);
       }
       else{
-        this.treeProps[this.editIndex]=this.tempNavProp;
+        //this.treeProps.splice(this.editIndex, 1, this.tempNavProp);
+        this.$set(this.treeProps,this.editIndex,this.tempNavProp);
+        //this.treeProps[this.editIndex]=this.tempNavProp;
       }
       //this.treeProps.push(this.tempNavProp);
       this.resetTempNavProp();
@@ -150,7 +163,7 @@ export default {
   cursor:pointer;
 }
 .label-column{
-  width:50px;
+  width:50px !important;
 }
 .input-column{
   width:calc( 100% - 50px );

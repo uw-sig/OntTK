@@ -47,8 +47,12 @@ export default {
     }
   },
   watch: {
-    property: function (val) {
-      this.refresh(this.subjectNode);
+    property: {
+      handler: function(newVal){
+        console.log("property change in biditree");
+        this.refresh(this.subjectNode);
+      },
+      deep:true,
     },
     subject: function (val) {
       this.subjectNode = {'level':0,'label':val.label,'isleaf':false,'expanded':true,'data':val.data}
@@ -123,13 +127,6 @@ export default {
       }
 
       this.query(subordinateQuery,success,this.displayErrors);
-
-      /*
-      for(var upInd=0; upInd<upChildren.length; upIndex++){
-        var upChild = upChildren[upInd];
-        upNodesAsList.push({'level':1,'label':upChild.label,'expanded':false,'isleaf':upChild.leaf,'data':{iri:upChild.iri}});
-      }
-      */
     },
     query: function (queryString,successCallback,errorCallback) {
       //var queryString = 'SELECT * WHERE {?a ?b ?c} limit 10';

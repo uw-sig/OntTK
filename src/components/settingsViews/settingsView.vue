@@ -11,8 +11,7 @@ export default {
   props: ['view'],
   data () {
     return {
-      //internalSettings:{}
-      //settings:{}
+      internalSettings:{}
     }
   },
   computed:{
@@ -24,98 +23,46 @@ export default {
     },
     settings:{
       get:function(){
-        var type = this.view.view.extends.name;
-        var viewName = this.view.view.name;
-        if(type==='DataView'){
-          return this.dataViewSettings[viewName];
-        }
-        else if(type==='NavView'){
-          return this.navViewSettings[viewName];
-        }
-        /*
-        var latestSettings = {};
-        if(this.view.view.extends!=undefined && this.view.view.extends.name==="DataView"){
-          latestSettings = this.$store.getters.getDataViewSettings(this.view.name);
-        }
-        return latestSettings;
-        */
-        //return this.internalSettings;
+        return this.internalSettings;
       },
       set:function(val){
-        var type = this.view.view.extends.name;
-        var settingsReg = {
-          name:this.view.view.name,
-          settings:val,
-        };
-        if(type==='DataView'){
-          this.$store.commit('addDataViewSettings',settingsReg);
-        }
-        else if(type==='NavView'){
-          this.$store.commit('addNavViewSettings',settingsReg);
-        }
-
-        //this.$store.dispatch('settingsRegister',settingsReg);
-        //this.internalSettings = val;
+        this.internalSettings = val;
       }
     }
 
   },
   watch: {
-    /*
-    settings:{
-      handler: function(newValue){
-        console.log("settings changed, new value = "+JSON.stringify(newValue));
-      },
-      deep: true
-    },
-    */
-    /*
-    currSettings: {
-      handler: function(newValue) {
-          console.log("currSettings changed, new value = "+JSON.stringify(newValue));
-          this.settingsUpdate(newValue);
-      },
-      deep: true
-    }
-    */
+
   },
   created: function(){
-    //this.settings = this.internalSettings;
+
   },
   mounted: function(){
-    //this.settings = this.internalSettings;
-    /*
-    if(this.view.view.extends!=undefined && this.view.view.extends.name==="DataView"){
-      this.settings = this.$store.getters.getDataViewSettings(this.view.name);
+    // initialize settings
+    var type = this.view.view.extends.name;
+    var viewName = this.view.view.name;
+    if(type==='DataView'){
+      this.settings = _.cloneDeep(this.dataViewSettings[viewName]);
     }
-    */
-
+    else if(type==='NavView'){
+      this.settings = _.cloneDeep(this.navViewSettings[viewName]);
+    }
   },
   methods: {
-
-    // methods to wrap store
-    //(so DataView implementations don't need to reference it)
-    /*
-    queryOntology: function(sparql) {
-      var queryObj = {
-        query:sparql
+    saveSettings: function(){
+      console.log("saveSettings called!");
+      var type = this.view.view.extends.name;
+      var settingsReg = {
+        name:this.view.view.name,
+        settings:this.internalSettings,
+      };
+      if(type==='DataView'){
+        this.$store.commit('addDataViewSettings',settingsReg);
       }
-
-      return this.$store.dispatch('query',queryObj)
+      else if(type==='NavView'){
+        this.$store.commit('addNavViewSettings',settingsReg);
+      }
     },
-    getQueries: function() {
-      var settingsViewMap = this.$store.getters.getSettingsViewMap;
-      return this.$store.getters.getQueries;
-    },
-    */
-    /*
-    settingsUpdate: function(){
-      var newSettings = this.settings;
-      var settingsObj = {name:this.view.name,type:this.view.view.extends.name,settings:newSettings}
-      this.$store.dispatch('settingsRegister',settingsObj);
-      //this.$emit('settings-update',settingsObj);
-    }
-    */
   }
 }
 

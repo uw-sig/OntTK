@@ -24,9 +24,10 @@ var config = {
   navProperties: [
     {iri: 'http://www.w3.org/2000/01/rdf-schema#subClassOf',label: 'subclass of', inv: true},
     {iri:'http://purl.org/sig/ont/fma/part', label:'part', inv:false},
+    {iri: 'http://purl.org/sig/ont/fma/continuous_distally_with', label: 'continuous with distally', inv: false},
+    /*
     {iri: 'http://purl.org/sig/ont/fma/regional_part', label: 'regional part', inv: false},
-    {iri: 'http://purl.org/sig/ont/fma/continuous_distally_with', label: 'continuous with', inv: false},
-
+    */
     /*
     {iri: 'http://purl.org/sig/ont/cpo/regional_part', label: 'regional part', inv: false},
     {iri: 'http://www.w3.org/2000/01/rdf-schema#subClassOf',label: 'subclass of', inv: true},
@@ -35,7 +36,7 @@ var config = {
   ],
 
   navViews: [
-    'BidiCarouselCardTree','BidiMultiTree'
+    'BidiCarouselCardTree','BidiCarouselTree','BidiMultiTree'
   ],
   initNavView: 'BidiCarouselCardTree',//'BidiMultiTree',
   dataViews:[

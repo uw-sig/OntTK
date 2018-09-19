@@ -7,7 +7,8 @@
         <navview :node="node" @node-selected="nodeSelected"></navview>
         -->
         <component
-          :is="navViews[0].view"
+          v-if="navView !== null"
+          :is="navView.view"
           :node="node"
           @node-selected="nodeSelected"
         />
@@ -31,7 +32,7 @@
         <div>Property = {{property}}</div>
         <div>Selected = {{node}}</div>
       -->
-        <el-tabs v-model="activeDataView" @tab-click="handleClick" >
+        <el-tabs v-model="selectedDataView" @tab-click="handleClick" >
           <!--
           <el-tab-pane label="Description" name="Description"><nodeinfo v-if="node!=undefined" :node="node" @node-selected="treeNodeSelected"></nodeinfo></el-tab-pane>
           -->
@@ -99,10 +100,10 @@ export default {
       propertyIndex: config.init.propertyIndex,
       //treeProps: config.navProperties,
       dataViews: [],
-      activeDataView:config.initDataView,
+      selectedDataView:config.initDataView,
 
-      navViews: [],
-      activeNavView:config.initNavView,
+
+      //activeNavView:config.initNavView,
     }
   },
   created: function(){
@@ -131,6 +132,9 @@ export default {
       return this.config.treeProps
     },
     */
+    navView: function(){
+      return this.$store.getters.getActiveNavView;
+    },
     contentWidth: function(){
       return 24-(this.navWidth);
     },
@@ -175,9 +179,13 @@ export default {
       var confDataViewNames = config.dataViews;
       var dataViews = allDataViews.filter(view => confDataViewNames.includes(view.name));
 
-      vm.$store.commit("setAllDataViews",allDataViews);
-      vm.$store.commit("setSelectedDataViews",dataViews);
+      //vm.$store.commit("setAllDataViews",allDataViews);
+      //vm.$store.commit("setSelectedDataViews",dataViews);
+      vm.$store.commit("setAllDataViews",dataViews);
       vm.dataViews = dataViews;
+
+      // intially set the active data views to all of the configured data views
+      vm.$store.commit("setActiveDataViews",dataViews);
     },
     loadNavViews: function(){
       var vm = this;
@@ -197,9 +205,13 @@ export default {
       var confNavViewNames = config.navViews;
       var navViews = allNavViews.filter(view => confNavViewNames.includes(view.name));
 
-      vm.$store.commit("setAllNavViews",allNavViews);
-      vm.$store.commit("setSelectedNavViews",navViews);
-      vm.navViews = navViews;
+      vm.$store.commit("setAllNavViews",navViews);
+
+      // initialize active navigation view from config
+      var initNavView = navViews.find(view => view.name===config.initNavView);
+      vm.$store.commit("setActiveNavView",initNavView);
+
+      //vm.navViews = navViews;
     },
     /*
     loadDataView(filePath) {

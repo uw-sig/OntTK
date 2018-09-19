@@ -3,29 +3,15 @@
 
     <el-row class="full-height">
       </el-col :span="24">
-        <el-carousel
-          trigger="click"
-          :autoplay='false'
-          height='100%'
-          :type='getStyle'
-          @change="changeActive"
-          :initial-index="selectedSlideIndex"
-        >
-          <el-carousel-item v-for="property,index in properties" :key="property.key" class="tree-col" :label="property.label" >
+        <el-carousel trigger="click" :autoplay='false' height='100%' :type='getStyle' @change="changeActive">
+          <el-carousel-item v-for="property,index in settings.treeProps" :key="index" class="tree-col" :label="property.label" height="100%">
             <div class="tree-area">
-              <biditree
-                v-if="node!=undefined"
-                :subject="subject"
-                :property="property"
-                :displaySubject="index===selectedSlideIndex"
-                @node-selected="treeNodeSelected"
-              >
-              </biditree>
+              <biditree v-if="node!=undefined" :subject="subject" :property="property" :displaySubject="index===selectedSlideIndex" @node-selected="treeNodeSelected"></biditree>
             </div>
           </el-carousel-item>
-
         </el-carousel>
       </el-col>
+
     </el-row>
   </div>
 </template>
@@ -40,30 +26,20 @@ export default {
   components:{
     biditree:biditree
   },
-  name: 'BidiCarouselCardTree',
+  name: 'BidiCarouselTree',
   extends: NavView,
   data() {
     return {
-      settingsDialogVisible: false,
-
       selectedSlideIndex:0,
       initSettings: {
         treeProps:_.cloneDeep(config.navProperties),
-        isCardStyle:true,
+        isCardStyle:false,
       },
       settingsView:bidiTreeSettingsView,
     }
   },
-  watch: {
-    properties: {
-      handler: function(newVal){
-        this.assignKeys();
-      },
-      deep:true,
-    }
-  },
-  mounted: function(){
-    this.assignKeys();
+  created: function(){
+
   },
   computed: {
     subject: function(){
@@ -75,32 +51,17 @@ export default {
     getStyle: function(){
       var style = (this.settings.isCardStyle) ? 'card' : '';
       return style;
-    },
-    properties: function(){
-      if(this.settings == undefined){
-        return [];
-      }
-      return this.settings.treeProps;
-    },
+    }
   },
   methods: {
     treeNodeSelected: function(nodeinfo){
       this.$emit('node-selected',nodeinfo);
       //this.refresh(item);
     },
-    assignKey: function(propIndex){
-      var prop = this.properties[propIndex];
-      prop.key = prop.label+'_'+Date.now();
-    },
-    assignKeys: function(){
-      this.properties.forEach(function(prop) {
-        prop.key = prop.label+'_'+Date.now();
-      });
-    },
     changeActive: function(index){
       this.selectedSlideIndex = index;
       //alert("new active slide index = "+index);
-    },
+    }
   }
 }
 </script>
@@ -125,11 +86,10 @@ span.clear { clear: left; display: block; }
 }
 .el-carousel {
   height:100%;
-  overflow:hidden;
 }
-.el-carousel__indicators{
-  position:absolute !important;
-  bottom:0px !important;
+.el-carousel__indicators--outside{
+  position:absolute;
+  bottom:0px;
 }
 .el-carousel__button {
   font-weight:bolder;

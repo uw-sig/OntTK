@@ -97,7 +97,7 @@
     ></search-results-dialog>
     <settings-dialog
       :visible="settingsDialogVisible"
-      @settings-update=""
+      @settings-update="settingsUpdate"
       @settings-close="settingsDialogVisible=false"
     ></settings-dialog>
   </div>
@@ -169,9 +169,6 @@ export default {
     showSettings: function(){
       this.settingsDialogVisible=true;
     },
-    setSettings(settings){
-      this.$store.dispatch('setSettings',settings);
-    },
     bookmarkAdd: function(){
       var node = this.currNode;
       this.bookmarks.push(node);
@@ -236,6 +233,9 @@ export default {
     setSelectedNode(node){
       //this.$store.commit('setNode',node);
       this.$store.dispatch('setNodeWithHistory',node);
+    },
+    settingsUpdate(){
+      this.settingsDialogVisible=false;
     }
   }
 }
@@ -316,8 +316,8 @@ export default {
     background-color: #409EFF;
   }
   .el-button--primary.is-disabled, .el-button--primary.is-disabled:active, .el-button--primary.is-disabled:focus, .el-button--primary.is-disabled:hover {
-    border-color: gray;
-    background-color: gray;
+    border-color: lightgray !important;
+    background-color: gray !important;
   }
   .el-button-group {
     white-space: nowrap;
@@ -333,7 +333,7 @@ export default {
   .el-main {
     background-color: #E9EEF3;
     color: #333;
-    margin: 0px; padding: 0px;
+    margin: 0px !important; padding: 0px !important;
   }
 
   html,body,#app,#app > .el-container{ height: 100%; margin: 0px; padding: 0px;}

@@ -24,7 +24,7 @@ export default {
     property: function (val) {
       // property change, may need to send inactive event to parent
       this.notifyActive();
-    }
+    },
   },
   computed: {
     navViewSettings:function(){
@@ -85,10 +85,15 @@ export default {
     },
 
     settingsRegister: function(){
-      if(!_.isEmpty(this.initSettings)){
+      if(_.isEmpty(this.settings)&&!_.isEmpty(this.initSettings)){
         this.settings = this.initSettings;
       }
     },
+    reinit: function(){
+      if(!_.isEmpty(this.initSettings)){
+        this.settings = this.initSettings;
+      }
+    }
   }
 }
 

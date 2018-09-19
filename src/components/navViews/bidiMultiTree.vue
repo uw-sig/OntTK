@@ -6,7 +6,7 @@
           <span class="property-input-label">property: {{property.label}}</span>
         </div>
         <div class="tree-area">
-          <biditree v-if="node!=undefined" :subject="subject" :property="property" @node-selected="treeNodeSelected"></biditree>
+          <biditree v-if="node!=undefined" :subject="subject" :property="property" :display-subject=true @node-selected="treeNodeSelected"></biditree>
         </div>
       </el-col>
     </el-row>
@@ -26,7 +26,7 @@ export default {
   extends: NavView,
   data() {
     return {
-      treeProps: config.navProperties,
+      treeProps: _.cloneDeep(config.navProperties),
     }
   },
   created: function(){

@@ -5,8 +5,9 @@ const state = {
   //config:config,
   settings: {
     general:{
-      selectedDataViews:[],
-      selectedNavViews:[],
+      navProperties:config.navProperties, // TODO: centralize nav properties (e.g. not per nav view)
+      activeDataViews:[],
+      activeNavView:null,
     },
     views:{
       dataViews:{},
@@ -31,9 +32,9 @@ const state = {
   history:[],
   historyIndex:-1,
 
-  //allDataViews:[],
+  allDataViews:[],
   //selectedDataViews:[],
-  //allNavViews:[],
+  allNavViews:[],
   //selectedNavViews:[],
 }
 
@@ -52,6 +53,13 @@ const getters = {
   },
   getNavViewSettings(state){
     return state.settings.views.navViews;
+  },
+
+  getActiveDataViews(state){
+    return state.settings.general.activeDataViews;
+  },
+  getActiveNavView(state){
+    return state.settings.general.activeNavView;
   },
   //getDataViewSettings: state => viewName => state.settings.views.dataViews[viewName],
   /*
@@ -97,20 +105,22 @@ const getters = {
       return '';
     }
   },
-  /*
+
   getAllDataViews(state){
     return state.allDataViews;
   },
   getAllNavViews(state){
     return state.allNavViews;
   },
-  */
+
+  /*
   getSelectedDataViews(state){
     return state.settings.general.selectedDataViews;
   },
   getSelectedNavViews(state){
     return state.settings.general.selectedNavViews;
   }
+  */
 }
 
 const mutations = {
@@ -128,28 +138,36 @@ const mutations = {
   setAllNavViews(state, views){
     state.allNavViews = views;
   },
+  /*
   setSettings(state,settings){
     state.settings = settings;
   },
-  setSelectedDataViews(state, views){
-    state.settings.general.selectedDataViews = views;
+  */
+  setActiveDataViews(state, views){
+    state.settings.general.activeDataViews = views;
   },
-  setSelectedNavViews(state, views){
-    state.settings.general.selectedNavViews = views;
+  setActiveNavView(state, view){
+    state.settings.general.activeNavView = view;
   },
 
   addDataViewSettings(state,settingsEntry){
     var name = settingsEntry.name;
-    var settings = settingsEntry.settings;
+    var settings = _.cloneDeep(settingsEntry.settings);
     Vue.set(state.settings.views.dataViews, name, settings);
     //state.settings.views.dataViews[name]=settings;
   },
   addNavViewSettings(state,settingsEntry){
     var name = settingsEntry.name;
-    var settings = settingsEntry.settings;
+    var settings = _.cloneDeep(settingsEntry.settings);
     Vue.set(state.settings.views.navViews, name, settings);
     //state.settings.views.navViews[name]=settings;
-  }
+  },
+  initialiseSettings(state) {
+		// Check if the ID exists
+		if(localStorage.getItem('settings')) {
+			state.settings = JSON.parse(localStorage.getItem('settings'));
+		}
+	},
   /*
   addDataViewSettings(state,settingsEntry){
     state.settings = settings;
@@ -190,6 +208,19 @@ const actions = {
     var toNode = context.state.history[context.state.historyIndex];
     context.state.node = toNode;
   },
+  storeSettings: function(context){
+    localStorage.setItem('settings', JSON.stringify(context.state.settings));
+  },
+  clearStoredSettings: function(context){
+    // clear local storage
+    localStorage.removeItem('settings');
+
+    // tell all views to load init settings
+    var activeNavView = context.state.settings.general.activeNavView;
+    activeNavView.reinit()
+    //activeNavView.reinit();
+  }
+
   /*
   settingsRegister(context,settingsReg){
     //alert("asdfasd"+JSON.stringify(settingsReg));
