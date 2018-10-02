@@ -125,6 +125,9 @@ export default {
 
           // check if array (TODO:figure out why this is needed)
           var settingsView = vm.$refs[key];
+          if(settingsView==undefined){
+            return;
+          }
           if(Array.isArray(settingsView)){
             settingsView[0].saveSettings();
           }
