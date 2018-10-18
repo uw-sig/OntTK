@@ -32,7 +32,7 @@
         <div>Property = {{property}}</div>
         <div>Selected = {{node}}</div>
       -->
-        <el-tabs v-model="selectedDataView" @tab-click="handleClick" >
+        <el-tabs v-if="dataViews.length>0" v-model="selectedDataView" @tab-click="handleClick" >
           <!--
           <el-tab-pane label="Description" name="Description"><nodeinfo v-if="node!=undefined" :node="node" @node-selected="treeNodeSelected"></nodeinfo></el-tab-pane>
           -->
@@ -99,7 +99,7 @@ export default {
       //config: config,
       propertyIndex: config.init.propertyIndex,
       //treeProps: config.navProperties,
-      dataViews: [],
+      //dataViews: [],
       selectedDataView:config.initDataView,
 
 
@@ -134,6 +134,9 @@ export default {
     */
     navView: function(){
       return this.$store.getters.getActiveNavView;
+    },
+    dataViews: function(){
+      return this.$store.getters.getActiveDataViews;
     },
     contentWidth: function(){
       return 24-(this.navWidth);
@@ -182,10 +185,20 @@ export default {
       //vm.$store.commit("setAllDataViews",allDataViews);
       //vm.$store.commit("setSelectedDataViews",dataViews);
       vm.$store.commit("setAllDataViews",dataViews);
-      vm.dataViews = dataViews;
+      //vm.dataViews = dataViews;
 
-      // intially set the active data views to all of the configured data views
-      vm.$store.commit("setActiveDataViews",dataViews);
+      // determine active dataViews from localStorage or config as appropriate
+      var settingsFromLocalStorage = vm.$store.getters.settingsFromLocalStorage;
+      if(settingsFromLocalStorage===true){
+        var activeDataViewsStore = vm.$store.getters.getActiveDataViews;
+        var activeDataViewNames = activeDataViewsStore.map(view => view.name);
+        var currActiveDataViews = dataViews.filter(view => activeDataViewNames.includes(view.name));
+      }
+      else {
+        var currActiveDataViews = dataViews.filter(view => confDataViewNames.includes(view.name));
+      }
+
+      vm.$store.commit("setActiveDataViews",currActiveDataViews);
     },
     loadNavViews: function(){
       var vm = this;
@@ -207,9 +220,20 @@ export default {
 
       vm.$store.commit("setAllNavViews",navViews);
 
+      // determine active dataViews from localStorage or config as appropriate
+      var settingsFromLocalStorage = vm.$store.getters.settingsFromLocalStorage;
+      if(settingsFromLocalStorage===true){
+        var activeNavViewStore = vm.$store.getters.getActiveNavView;
+        var currActiveNavView = navViews.find(view => (view.name===activeNavViewStore.name));
+      }
+      else {
+        var currActiveNavView = navViews.find(view => view.name===config.initNavView);
+      }
+      vm.$store.commit("setActiveNavView",currActiveNavView);
+
       // initialize active navigation view from config
-      var initNavView = navViews.find(view => view.name===config.initNavView);
-      vm.$store.commit("setActiveNavView",initNavView);
+      //var initNavView = navViews.find(view => view.name===config.initNavView);
+      //vm.$store.commit("setActiveNavView",initNavView);
 
       //vm.navViews = navViews;
     },

@@ -210,6 +210,7 @@ export default {
       searchTerm = searchTerm.trim();
       searchTerm = searchTerm.replace(/[\/\(\)\{\}\+\_\&\|\!\{\}\^\"\~\:\\]/g, "?");
     	searchTerm = searchTerm.replace(/ /g, '\\\\ ');
+      console.log("searchTerm = "+searchTerm);
       var promise = this.$store.dispatch('query',{query:this.config.search.query(searchTerm)});
       promise.then((results) => {
         this.searchResults=[];

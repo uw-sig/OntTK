@@ -80,7 +80,6 @@ export default {
         //newSettings['showAxiomAnnots']=val;
         //this.settings = newSettings;
 //        this.settings['treeProps']=val;
-console.log('setting treeProps');
         this.$set(this.settings['treeProps'],this.editIndex,this.tempNavProp);
         //this.settingsUpdate();
       }

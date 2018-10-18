@@ -7,7 +7,7 @@
           trigger="click"
           :autoplay='false'
           height='100%'
-          :type='getStyle'
+          type='card'
           @change="changeActive"
           :initial-index="selectedSlideIndex"
         >

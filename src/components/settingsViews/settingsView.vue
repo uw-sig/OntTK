@@ -50,7 +50,6 @@ export default {
   },
   methods: {
     saveSettings: function(){
-      console.log("saveSettings called!");
       var type = this.view.view.extends.name;
       var settingsReg = {
         name:this.view.view.name,

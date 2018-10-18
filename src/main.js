@@ -39,7 +39,7 @@ new Vue({
   components: { App },
 
   beforeCreate() {
-		this.$store.commit('initialiseSettings');
+		this.$store.commit('initializeSettings');
 	}
 });
 
