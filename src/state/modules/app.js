@@ -4,6 +4,7 @@ import Vue from 'vue'
 const state = {
   //config:config,
   settings: {
+    fromLocalStorage:false,
     general:{
       navProperties:config.navProperties, // TODO: centralize nav properties (e.g. not per nav view)
       activeDataViews:[],
@@ -60,6 +61,9 @@ const getters = {
   },
   getActiveNavView(state){
     return state.settings.general.activeNavView;
+  },
+  settingsFromLocalStorage(state){
+    return state.settings.fromLocalStorage;
   },
   //getDataViewSettings: state => viewName => state.settings.views.dataViews[viewName],
   /*
@@ -162,10 +166,12 @@ const mutations = {
     Vue.set(state.settings.views.navViews, name, settings);
     //state.settings.views.navViews[name]=settings;
   },
-  initialiseSettings(state) {
+  initializeSettings(state) {
 		// Check if the ID exists
 		if(localStorage.getItem('settings')) {
 			state.settings = JSON.parse(localStorage.getItem('settings'));
+      state.settings.fromLocalStorage=true;
+      //console.log("settings =  "+JSON.stringify(state.settings));
 		}
 	},
   /*
@@ -217,8 +223,11 @@ const actions = {
 
     // tell all views to load init settings
     var activeNavView = context.state.settings.general.activeNavView;
-    activeNavView.reinit()
     //activeNavView.reinit();
+    //TODO: finish/redo the above logic of resetting settings to default
+
+    //temp solution
+    window.location.reload(true);
   }
 
   /*
