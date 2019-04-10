@@ -49,7 +49,7 @@
       <el-container id="middle">
         <!--<el-aside width="150px"></el-aside>-->
         <el-main>
-          <browser :navWidth="navWidth"/>
+          <browser :navWidth="navWidth" v-loading="isLoading" />
         </el-main>
       </el-container>
       <el-footer height="40px">
@@ -153,6 +153,9 @@ export default {
     }
   },
   computed: {
+    isLoading: function(){
+      return this.$store.getters.getLoading
+    },
     currNode: function(){
       return this.$store.getters.getNode
     },

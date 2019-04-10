@@ -148,7 +148,7 @@ export default {
     },
     displayErrors: function(errors){
       //alert("errors: "+errors);
-      console.log("biditree errors = "+errors);
+      //console.log("biditree errors = "+errors);
     },
 
     nodeID: function(node){
@@ -259,14 +259,20 @@ export default {
       alert("should not have made it here: "+node.label);
     },
     isVisible: function(node,dir){
-      // only one node should be without a direction,
-      // that is the subject and it should be visible
-      if (typeof dir === 'undefined') {
+      // if this node is the subject, it should be visible
+      if (node === this.subjectNode/*typeof dir === 'undefined'*/) {
         return true;
       }
 
+      // if parent is not expanded, node is not visible
       var parentNode = this.getParent(node,dir);
-      if(parentNode.expanded){
+      if(!parentNode.expanded){
+        return false;
+      }
+
+      // if we made it here, this is not the subject node and its parent is expanded
+      // however, there could still be a collapsed node further up the tree
+      if(this.isVisible(parentNode,dir)){
         return true;
       }
       else {

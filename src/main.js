@@ -26,6 +26,11 @@ Vue.config.productionTip = false
 var allDataViews = loadDataViews();
 var allNavViews = loadNavViews();
 
+// global error handler
+Vue.config.errorHandler = function (err, vm, info) {
+  alert("err: "+err+", vm: "+vm+", info:"+info);
+}
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
