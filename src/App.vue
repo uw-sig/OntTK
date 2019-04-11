@@ -338,6 +338,7 @@ export default {
     background-color: #E9EEF3;
     color: #333;
     margin: 0px !important; padding: 0px !important;
+    height: 100%;
   }
 
   html,body,#app,#app > .el-container{ height: 100%; margin: 0px; padding: 0px;}
