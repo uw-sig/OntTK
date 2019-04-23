@@ -190,6 +190,7 @@ export default {
     },
     setNodeByIRI: function(iri){
       var promise = this.$store.dispatch('query',{query:this.config.iri_search.query(iri)});
+
       promise.then((results) => {
         this.searchResults=[];
         var resObj = results;//JSON.parse(results);
@@ -197,6 +198,7 @@ export default {
         if(bindings.length>0){
           var binding = bindings[0];
           var nodeForIRI = {label:binding.label.value,iri:iri};
+          //this.$store.commit('setNodeWithHistory',nodeForIRI);
           this.$store.dispatch('setNodeWithHistory',nodeForIRI);
         }
         else {
@@ -205,7 +207,7 @@ export default {
         }
       }).catch((errors) => {
         // TODO: improve error handling
-        console.log("failed iri search for "+iri);
+        alert("failed iri search for "+iri);
       });
     },
     search: function(event){

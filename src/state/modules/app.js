@@ -186,7 +186,16 @@ const mutations = {
   },
   setQueryFinished(state,queryID) {
     _.pull(state.runningQueries,queryID);
-  }
+  },
+  /*
+  setNodeWithHistory(state,node){
+    state.node = node;
+    //add to history (clear all previous history after this node)
+    state.historyIndex++;
+    state.history.length = state.historyIndex;
+    state.history.push(node);
+  },
+  */
   /*
   setLoading(state,isLoading){
     state.loading=isLoading;
@@ -212,9 +221,11 @@ const mutations = {
 }
 
 const actions = {
+  /*
   setNodeByIRI(context,iri){
     context.dispatch('query')
   },
+*/
   setNodeWithHistory(context,node){
     context.state.node = node;
     //add to history (clear all previous history after this node)

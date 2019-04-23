@@ -1,5 +1,5 @@
 <template>
-<div id="node-info-container">
+<div id="node-info-container" v-if="node!=undefined">
   <div class="node-iri">{{node.iri}}</div>
   <div class="section-break"></div>
   <hr>
@@ -92,7 +92,9 @@ export default {
     }
   },
   mounted: function(){
-    this.treeNodeSelected(this.node);
+    if(this.node!=undefined){
+      this.treeNodeSelected(this.node);
+    }
   },
   methods: {
     treeNodeSelectedInternal: function(node) {
