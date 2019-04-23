@@ -32,6 +32,7 @@ const state = {
   property: null,
   history:[],
   historyIndex:-1,
+  runningQueries:[],
 
   allDataViews:[],
   //selectedDataViews:[],
@@ -116,6 +117,12 @@ const getters = {
   getAllNavViews(state){
     return state.allNavViews;
   },
+  getLoading(state){
+    if(state.runningQueries && state.runningQueries.length){
+      return true;
+    }
+    return false;
+  }
 
   /*
   getSelectedDataViews(state){
@@ -174,6 +181,26 @@ const mutations = {
       //console.log("settings =  "+JSON.stringify(state.settings));
 		}
 	},
+  setQueryStarted(state,queryID) {
+    state.runningQueries.push(queryID);
+  },
+  setQueryFinished(state,queryID) {
+    _.pull(state.runningQueries,queryID);
+  },
+  /*
+  setNodeWithHistory(state,node){
+    state.node = node;
+    //add to history (clear all previous history after this node)
+    state.historyIndex++;
+    state.history.length = state.historyIndex;
+    state.history.push(node);
+  },
+  */
+  /*
+  setLoading(state,isLoading){
+    state.loading=isLoading;
+  }
+  */
   /*
   addDataViewSettings(state,settingsEntry){
     state.settings = settings;
@@ -194,9 +221,11 @@ const mutations = {
 }
 
 const actions = {
+  /*
   setNodeByIRI(context,iri){
     context.dispatch('query')
   },
+*/
   setNodeWithHistory(context,node){
     context.state.node = node;
     //add to history (clear all previous history after this node)

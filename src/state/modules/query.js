@@ -67,10 +67,14 @@ const actions = {
       //responseType: 'json'
     };
 
+		var queryID = _.uniqueId();
     var queryUrl = this.getters.getEndpoint;//+"?query="+encodeURIComponent(queryString);
     //var http = this.getters.getHttp();
-    return Vue.http.get(queryUrl,options).then((response) => Promise.resolve(response.data))
+		context.commit('setQueryStarted', queryID, { root: true });
+		var remotePromise = Vue.http.get(queryUrl,options).then((response) => Promise.resolve(response.data))
       .catch((error) => Promise.reject(error));
+		context.commit('setQueryFinished', queryID, { root: true });
+    return remotePromise;
       /*
     Vue.http.get(queryUrl,options).then(
       response => success_function, response => error_function

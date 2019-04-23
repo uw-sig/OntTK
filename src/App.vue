@@ -49,7 +49,7 @@
       <el-container id="middle">
         <!--<el-aside width="150px"></el-aside>-->
         <el-main>
-          <browser :navWidth="navWidth"/>
+          <browser :navWidth="navWidth" v-loading="isLoading" />
         </el-main>
       </el-container>
       <el-footer height="40px">
@@ -153,6 +153,9 @@ export default {
     }
   },
   computed: {
+    isLoading: function(){
+      return this.$store.getters.getLoading
+    },
     currNode: function(){
       return this.$store.getters.getNode
     },
@@ -187,6 +190,7 @@ export default {
     },
     setNodeByIRI: function(iri){
       var promise = this.$store.dispatch('query',{query:this.config.iri_search.query(iri)});
+
       promise.then((results) => {
         this.searchResults=[];
         var resObj = results;//JSON.parse(results);
@@ -194,6 +198,7 @@ export default {
         if(bindings.length>0){
           var binding = bindings[0];
           var nodeForIRI = {label:binding.label.value,iri:iri};
+          //this.$store.commit('setNodeWithHistory',nodeForIRI);
           this.$store.dispatch('setNodeWithHistory',nodeForIRI);
         }
         else {
@@ -202,7 +207,7 @@ export default {
         }
       }).catch((errors) => {
         // TODO: improve error handling
-        console.log("failed iri search for "+iri);
+        alert("failed iri search for "+iri);
       });
     },
     search: function(event){
@@ -335,6 +340,7 @@ export default {
     background-color: #E9EEF3;
     color: #333;
     margin: 0px !important; padding: 0px !important;
+    height: 100%;
   }
 
   html,body,#app,#app > .el-container{ height: 100%; margin: 0px; padding: 0px;}
