@@ -2,6 +2,10 @@
 
 > A toolkit for ontology exploration
 
+## Configuration
+
+Before you build/deploy this project, you first need to configure it for your ontology and SPARQL endpoint. Instructions can be found in the wiki at: https://github.com/uw-sig/OntTK/wiki/Configuring-OntTK. After configuration, use the NPM operations below for building and testing. 
+
 ## Build Setup
 
 ``` bash
