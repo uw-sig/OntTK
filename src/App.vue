@@ -14,7 +14,7 @@
               <el-col :span="18">
                 <el-row type="flex" justify="end">
                   <span id="search-label">search:</span>
-                  <el-input class="search-input" placeholder="enter search term ..." prefix-icon="el-icon-search" v-on:keyup.enter.native="search"></el-input>
+                  <el-input class="search-input" placeholder="enter search term ..." v-model="searchTerm" prefix-icon="el-icon-search" v-on:keyup.enter.native="search"></el-input>
                 </el-row>
               </el-col>
               <el-col :span="6">
@@ -125,6 +125,7 @@ export default {
 
       // search related fields
       config:config,
+      searchTerm: null,
       searchResultsDialogVisible: false,
       searchResults:[],
 
