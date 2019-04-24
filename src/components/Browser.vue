@@ -39,6 +39,7 @@
           <el-tab-pane v-for="dataView in dataViews" :key="dataView.name" :label="dataView.name" :name="dataView.name" :disabled="!dataView.isActive">
             <div id="tab-content">
               <component
+                v-if="node != undefined"
                 :is="dataView.view"
                 :node="node"
                 :property="$store.getters.getProperty"
