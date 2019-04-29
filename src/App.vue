@@ -344,6 +344,7 @@ export default {
     height: 100%;
   }
 
-  html,body,#app,#app > .el-container{ height: 100%; margin: 0px; padding: 0px;}
+  html,body,#app,#app > .el-container { height: 100%; margin: 0px; padding: 0px;}
+  #middle { height: calc(100% - 100px); margin: 0px; padding: 0px;}
 
 </style>
