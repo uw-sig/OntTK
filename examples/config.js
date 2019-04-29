@@ -16,7 +16,7 @@ var config = {
   navViews: [
     'BidiCarouselCardTree','BidiCarouselTree','BidiMultiTree'
   ],
-  initNavView: 'BidiCarouselTree'
+  initNavView: 'BidiCarouselTree',
   dataViews:[
     'Description','Images','Scenes'
   ],
