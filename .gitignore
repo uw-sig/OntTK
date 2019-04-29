@@ -7,8 +7,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # files specific to ontology used
-# src/config.js
-# src/queries.js
+src/config.js
+src/queries.js
 
 # Editor directories and files
 .idea
