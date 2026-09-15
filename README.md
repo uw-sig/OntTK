@@ -2,6 +2,10 @@
 
 > A toolkit for ontology exploration
 
+## Current status
+
+**Warning:** several library upgrades have been resolved by accepting dependabot pull requests. The resulting codebase has not been tested since these upgrades. 
+
 ## Configuration
 
 Before you build/deploy this project, you first need to configure it for your ontology and SPARQL endpoint. Instructions can be found on the wiki at: https://github.com/uw-sig/OntTK/wiki/Configuring-OntTK. After configuration, use the NPM operations below for building and testing. 
